@@ -1,1 +1,1 @@
-from .system import Sys
+from .struct import Struct

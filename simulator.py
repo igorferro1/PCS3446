@@ -1,14 +1,22 @@
-from .system import os
+from system.os import OperationalSystem
+
+from components import Struct
+
+from system.job import JobMix, Job
 
 
 def main():
     print("Inicio")
 
-    OS = os.OS()
+    struct = Struct(mem_size=128_000)
 
-    OS.boot()
+    os = OperationalSystem(struct=struct)
 
-    OS.run()
+    init = JobMix([Job("job1", 1, 1)])
+
+    os.boot(init)
+
+    os.run()
 
 
 if __name__ == "__main__":
