@@ -1,9 +1,16 @@
 class Job:
-    def __init__(self, name, memory_usage, execution_time):
-        self.name = name
-        self.memory_usage = memory_usage
-        self.execution_time = execution_time
-        self.phase = "Submitted"  # Initial phase
+    def __init__(self, name, arrival_time, memory_usage, execution_duration):
+        self.name: str = name
+
+        self.arrival_time: int = arrival_time
+        self.memory_usage: int = memory_usage
+        self.execution_duration: int = execution_duration
+
+        self.execution_init_time: int = None
+
+        self.execution_time: int = 0
+
+        self.phase: str = "Submitted"  # Initial phase
 
     def transition_to_waiting_for_memory(self):
         self.phase = "Waiting for Memory"
@@ -11,7 +18,9 @@ class Job:
     def transition_to_ready_for_execution(self):
         self.phase = "Ready for Execution"
 
-    def transition_to_executing(self):
+    def transition_to_executing(self, current_cpu_cycle: int):
+        self.execution_init_time = current_cpu_cycle
+        self.execution_expected_finish = current_cpu_cycle + self.execution_duration
         self.phase = "Executing"
 
     def transition_to_finished(self):

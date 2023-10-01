@@ -1,6 +1,6 @@
 from system.os import OperationalSystem
 
-from components import Struct
+from components import Hardware
 
 from system.job import JobMix, Job
 
@@ -8,9 +8,9 @@ from system.job import JobMix, Job
 def main():
     print("Inicio")
 
-    struct = Struct(mem_size=128_000)
+    hardware = Hardware(mem_size=128_000, cpu_speed=1, cpu_limit=10)
 
-    os = OperationalSystem(struct=struct)
+    os = OperationalSystem(hardware=hardware)
 
     init = JobMix([Job("job1", 1, 1)])
 

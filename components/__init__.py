@@ -1,1 +1,1 @@
-from .struct import Struct
+from .hardware import Hardware
