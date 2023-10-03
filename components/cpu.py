@@ -1,5 +1,5 @@
 from time import sleep
-from ..system.job import Job
+from system.job import Job
 
 
 class CPU:
@@ -25,7 +25,7 @@ class CPU:
         return x
 
     def free(self):
-        self.job = None
+        self.current_job = None
 
     def is_available(self):
         if self.current_job == None:

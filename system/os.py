@@ -26,13 +26,15 @@ class Scheduler:
             self.waiting_execution.append(job)
             job.transition_to_ready_for_execution()
 
-    def job_execute(self):
-        if self.hardware.cpu.is_available():
-            job = self.waiting_execution.pop(0)
-            job.transition_to_executing()
+    def job_execute(self, current_cpu_cycle: int):
+        if self.hardware.cpu.is_available() and self.waiting_execution:
+            job: Job = self.waiting_execution.pop(0)
+            job.transition_to_executing(current_cpu_cycle)
             self.executing = job
             self.hardware.cpu.allocate(job)
-        else:
+        if self.hardware.cpu.current_job:
+            self.hardware.cpu.current_job.execution_time += 1
+            print(f"Executing {self.hardware.cpu.current_job.name}")
             if (
                 self.hardware.cpu.current_job.execution_time
                 == self.hardware.cpu.current_job.execution_duration
@@ -40,14 +42,16 @@ class Scheduler:
                 self.executing = None
                 self.waiting_mfree.append(self.hardware.cpu.current_job)
                 self.hardware.cpu.free()
-            else:
-                self.hardware.cpu.current_job.execution_time += 1
-                print(f"Executing {self.hardware.cpu.current_job}")
+
+    def free_mem(self):
+        for job in self.waiting_mfree:
+            self.waiting_mfree.remove(job)
+            # frees memory that it's using
 
 
-# class FCFS(Scheduler):
-#     def __init__(self, hardware: Hardware):
-#         super().__init__(hardware)
+class FCFS(Scheduler):
+    def __init__(self, hardware: Hardware):
+        super().__init__(hardware)
 
 
 class OperationalSystem:
@@ -62,10 +66,11 @@ class OperationalSystem:
 
     def run(self):
         for current_cpu_cycle in self.hardware.cpu:
+            print("Ciclo {}".format(current_cpu_cycle))
             self.scheduler.job_ingress(current_cpu_cycle, self.jobmix)
 
             self.scheduler.job_malloc()
 
-            self.scheduler.job_execute()
+            self.scheduler.job_execute(current_cpu_cycle)
 
             self.scheduler.free_mem()

@@ -4,15 +4,17 @@ from components import Hardware
 
 from system.job import JobMix, Job
 
+from system.os import Scheduler
+
 
 def main():
     print("Inicio")
 
-    hardware = Hardware(mem_size=128_000, cpu_speed=1, cpu_limit=10)
+    hardware = Hardware(mem_size=128_000, block_size=4_000, cpu_speed=0.1, cpu_limit=25)
 
-    os = OperationalSystem(hardware=hardware)
+    os = OperationalSystem(hardware=hardware, scheduler=Scheduler(hardware))
 
-    init = JobMix([Job("job1", 1, 1)])
+    init = JobMix([Job("job1", 1, 1, 10), Job("job2", 3, 1, 5), Job("job3", 3, 1, 5)])
 
     os.boot(init)
 

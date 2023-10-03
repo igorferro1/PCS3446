@@ -12,6 +12,9 @@ class Job:
 
         self.phase: str = "Submitted"  # Initial phase
 
+    def __repr__(self):
+        return self.name
+
     def transition_to_waiting_for_memory(self):
         self.phase = "Waiting for Memory"
 
