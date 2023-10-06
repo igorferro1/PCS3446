@@ -1,14 +1,23 @@
 class Job:
-    def __init__(self, name, arrival_time, memory_usage, execution_duration):
+    def __init__(
+        self,
+        name: str,
+        arrival_time: int,
+        memory_usage: int,
+        execution_duration: int,
+        io_except: list[int] = [0, 0],
+    ):
         self.name: str = name
-
         self.arrival_time: int = arrival_time
+
         self.memory_usage: int = memory_usage
+        self.mem_addresses: list[int] = []
+
         self.execution_duration: int = execution_duration
+        self.time_left: int = 0
 
-        self.execution_init_time: int = None
-
-        self.execution_time: int = 0
+        self.inputs = io_except[0]
+        self.outputs = io_except[1]
 
         self.phase: str = "Submitted"  # Initial phase
 
@@ -22,8 +31,12 @@ class Job:
         self.phase = "Ready for Execution"
 
     def transition_to_executing(self, current_cpu_cycle: int):
-        self.execution_init_time = current_cpu_cycle
-        self.execution_expected_finish = current_cpu_cycle + self.execution_duration
+        for _ in range(self.inputs):
+            self.execution_duration += 10
+
+        for _ in range(self.outputs):
+            self.execution_duration += 15
+
         self.phase = "Executing"
 
     def transition_to_finished(self):
