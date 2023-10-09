@@ -27,8 +27,6 @@ class OperatingSystem:
             message="Choose jobmix file: ", choices=files
         ).ask()
         print(" ")
-
-        # jobmix_name = input("Choose jobmix file: ")
         jobmix_file = self.hardware.disk.joinpath(jobmix_name)
         if jobmix_file.is_file():
             self.read_jobmix(jobmix_file)

@@ -1,15 +1,16 @@
 from time import sleep
 from system.job import Job
-from .io import IORequest, IOFinishException, IOStartException
+from .io import IOProtocol, IORequest, IOFinishException, IOStartException
 
 
 class CPU:
-    def __init__(self, limit: int = 100, speed: int = None):
+    def __init__(self, limit: int, speed: int, io: IOProtocol):
         self.time = 0
         self.current_job: Job = None
         self.limit = limit
         self.speed = speed
 
+        self.io = io
         self.current_io_request: IORequest = None
 
     def __iter__(self):
@@ -57,9 +58,9 @@ class CPU:
                     print(f"Job {self.current_job}: Aritmetic op")
                 case "ioi":
                     print(f"Job {self.current_job}: IO in op")
-                    self.current_io_request = IORequest(type="in")
+                    self.current_io_request = self.io.io_request(type="in")
                     raise IOStartException
                 case "ioo":
                     print(f"Job {self.current_job}: IO out op")
-                    self.current_io_request = IORequest(type="out")
+                    self.current_io_request = self.io.io_request(type="out")
                     raise IOStartException
