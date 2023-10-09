@@ -84,8 +84,7 @@ class JobMix:
                         )
                         job_ops = []
                     case "#":
-                        tokens = [t for t in line.split(" ") if t != ""]
-                        job_name = tokens[-1].removesuffix("\n")
+                        job_name = line.removeprefix("# ").removesuffix("\n")
                     case "t":
                         tokens = [t for t in line.split(" ") if t != ""]
                         job_arrival_time = int(tokens[-1].removesuffix("\n"))
@@ -94,6 +93,11 @@ class JobMix:
                         job_memory = int(tokens[-1].removesuffix("\n"))
                     case _:
                         tokens = [t for t in line.split(" ") if t != ""]
-                        job_ops.append(tokens[-1].removesuffix("\n"))
+                        if "x" in tokens[-1]:
+                            op = tokens[-2]
+                            num_op = int(tokens[-1][1:].removesuffix("\n"))
+                            job_ops += [op] * num_op
+                        else:
+                            job_ops.append(tokens[-1].removesuffix("\n"))
 
         print("Jobmix read successfuly")
