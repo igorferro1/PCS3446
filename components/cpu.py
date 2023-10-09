@@ -37,3 +37,11 @@ class CPU:
             self.current_job = job
             return True
         return False
+
+    def execute(self):
+        op: str = self.current_job.operations.pop(0)
+        match op:
+            case "op":
+                print("Aritmetich op")
+            case "io":
+                print("IO op")

@@ -1,6 +1,8 @@
 from .cpu import CPU
 from .memory import Memory
 
+from pathlib import Path
+
 
 class Hardware:
     def __init__(
@@ -8,3 +10,5 @@ class Hardware:
     ):
         self.cpu = CPU(limit=cpu_limit, speed=cpu_speed)
         self.mem = Memory(size=mem_size, block_size=block_size)
+
+        self.disk = Path.cwd().joinpath("components").joinpath("disk")
