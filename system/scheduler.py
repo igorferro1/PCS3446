@@ -1,6 +1,8 @@
 from components import Hardware
 from .job import JobMix, Job
 
+from components.io import IOStartException, IOFinishException
+
 
 class Scheduler:
     def __init__(self, hardware: Hardware):
@@ -11,11 +13,14 @@ class Scheduler:
 
         self.executing: Job = None
 
+        self.waiting_io: list[Job] = []
+
         self.waiting_mfree: list[Job] = []
 
     def job_ingress(self, current_cpu_cycle: int, jobmix: list[Job]):
         for job in jobmix:
             if job.arrival_time == current_cpu_cycle:
+                print(f"Job {job}: arrived, moved to waiting mem")
                 job.transition_to_waiting_for_memory()
                 self.waiting_malloc.append(job)
 
@@ -29,13 +34,19 @@ class Scheduler:
             job: Job = self.waiting_execution.pop(0)
             job.transition_to_executing(current_cpu_cycle)
             self.executing = job
-            job.time_left = job.execution_duration
+            # job.time_left = job.execution_duration
             self.hardware.cpu.allocate(job)
 
         if self.hardware.cpu.current_job:
-            self.hardware.cpu.current_job.time_left -= 1
-            print(f"Executing {self.hardware.cpu.current_job.name}")
-            if not self.hardware.cpu.current_job.time_left:
+            try:
+                self.hardware.cpu.execute()
+            except IOStartException:
+                self.waiting_io.append(self.executing)
+            except IOFinishException:
+                self.waiting_io.remove(self.executing)
+
+            # print(f"Executing {self.hardware.cpu.current_job.name}")
+            if not self.hardware.cpu.current_job.time_left():
                 self.executing = None
                 self.waiting_mfree.append(self.hardware.cpu.current_job)
                 self.hardware.cpu.free()
@@ -53,8 +64,9 @@ class FCFS(Scheduler):
 
     def job_malloc(self):
         for _ in range(len(self.waiting_malloc)):
-            print(self.waiting_malloc)
+            print(f"Waiting malloc: {self.waiting_malloc}")
             job = self.waiting_malloc.pop(0)
+            print(f"Malloc Job: {job}")
             job.mem_addresses = self.hardware.mem.allocate(job.memory_usage, job.name)
             self.waiting_execution.append(job)
             job.transition_to_ready_for_execution()
@@ -67,8 +79,9 @@ class SJF(Scheduler):
 
     def job_malloc(self):
         for _ in range(len(self.waiting_malloc)):
-            print(self.waiting_malloc)
+            print(f"Waiting malloc: {self.waiting_malloc}")
             job = self.waiting_malloc.pop(0)
+            print(f"Malloc Job: {job}")
             job.mem_addresses = self.hardware.mem.allocate(job.memory_usage, job.name)
             self.waiting_execution.append(job)
             job.transition_to_ready_for_execution()

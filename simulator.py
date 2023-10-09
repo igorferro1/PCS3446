@@ -10,7 +10,7 @@ from system.scheduler import Scheduler, FCFS, SJF
 def main():
     print("Inicio")
 
-    hardware = Hardware(mem_size=20, block_size=5, cpu_speed=0.1, cpu_limit=100)
+    hardware = Hardware(mem_size=200, block_size=5, cpu_speed=0.1, cpu_limit=100)
 
     os = OperatingSystem(hardware=hardware, scheduler=SJF(hardware))
 

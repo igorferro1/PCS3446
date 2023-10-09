@@ -18,14 +18,20 @@ class Job:
 
         self.operations = operations
 
-        self.execution_duration: int = operations.count("op")
-
-        self.time_left: int = 0
+        self.execution_duration: int = (
+            operations.count("op") + operations.count("io") * 17
+        )
 
         self.phase: str = "Submitted"  # Initial phase
 
     def __repr__(self):
         return self.name
+
+    def time_left(self):
+        if self.operations:
+            return self.operations.count("op") + self.operations.count("io") * 17
+        else:
+            return 0
 
     def transition_to_waiting_for_memory(self):
         self.phase = "Waiting for Memory"
@@ -46,53 +52,48 @@ class Job:
 
 
 class JobMix:
-    def __init__(self, job_list: list[Job] = [], file: Path = None):
-        if job_list and file:
+    def __init__(self, job_list: list[Job] = None, file: Path = None):
+        if job_list is not None and file is not None:
             raise Exception("File and joblist not allowed")
 
-        self.job_list = job_list
+        if job_list:
+            self.job_list = job_list
+        else:
+            self.job_list = []
 
         if file:
             self.from_file(file)
 
     def from_file(self, file: Path):
         with open(file, mode="r") as f:
-            lines = f.readlines()
+            lines = f.readlines() + ["\n"]
             job_name = None
             job_arrival_time = None
             job_memory = None
             job_ops = []
             for line in lines:
-                if job_name is None:
-                    if line[0] == "#":
+                match line[0]:
+                    case "\n":
+                        self.job_list.append(
+                            Job(
+                                name=job_name,
+                                arrival_time=job_arrival_time,
+                                memory_usage=job_memory,
+                                operations=job_ops,
+                            )
+                        )
+                        job_ops = []
+                    case "#":
                         tokens = [t for t in line.split(" ") if t != ""]
                         job_name = tokens[-1].removesuffix("\n")
-                else:
-                    match line[0]:
-                        case "\n":
-                            if (
-                                job_arrival_time is None
-                                or job_memory is None
-                                or job_ops is []
-                            ):
-                                raise ValueError("Wrong file structure")
+                    case "t":
+                        tokens = [t for t in line.split(" ") if t != ""]
+                        job_arrival_time = int(tokens[-1].removesuffix("\n"))
+                    case "m":
+                        tokens = [t for t in line.split(" ") if t != ""]
+                        job_memory = int(tokens[-1].removesuffix("\n"))
+                    case _:
+                        tokens = [t for t in line.split(" ") if t != ""]
+                        job_ops.append(tokens[-1].removesuffix("\n"))
 
-                            self.job_list.append(
-                                Job(
-                                    name=job_name,
-                                    arrival_time=job_arrival_time,
-                                    memory_usage=job_memory,
-                                    operations=job_ops,
-                                )
-                            )
-                        case "t":
-                            tokens = [t for t in line.split(" ") if t != ""]
-                            job_arrival_time = int(tokens[-1].removesuffix("\n"))
-                        case "m":
-                            tokens = [t for t in line.split(" ") if t != ""]
-                            job_memory = int(tokens[-1].removesuffix("\n"))
-                        case _:
-                            tokens = [t for t in line.split(" ") if t != ""]
-                            job_ops.append(tokens[-1].removesuffix("\n"))
-
-        self.job_list
+        print("Jobmix read successfuly")

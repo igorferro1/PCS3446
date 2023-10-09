@@ -25,7 +25,7 @@ class Memory:
             bytes + block_size - 1
         ) // block_size  # Calculate how many blocks are needed
 
-        print(blocks_needed)
+        print(f"Blocks needed: {blocks_needed}")
 
         allocated_blocks = []
 
