@@ -7,9 +7,13 @@ m   100
 4   ioi
 5   op
 6   op
+7   ioo
+8   op
+9   op
+10  op
 
 # job2
 t   30
 m   100
-1   op  x20
+1   op  x10
 11  ioo

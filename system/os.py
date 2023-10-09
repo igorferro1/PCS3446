@@ -6,6 +6,7 @@ from .scheduler import Scheduler
 import os
 
 from seedir import seedir
+import questionary
 
 
 class OperatingSystem:
@@ -19,7 +20,15 @@ class OperatingSystem:
         seedir(self.hardware.disk)
 
     def ask_jobmix(self):
-        jobmix_name = input("Choose jobmix file: ")
+        files = [f.name for f in self.hardware.disk.iterdir() if f.is_file()]
+
+        print(" ")
+        jobmix_name = questionary.select(
+            message="Choose jobmix file: ", choices=files
+        ).ask()
+        print(" ")
+
+        # jobmix_name = input("Choose jobmix file: ")
         jobmix_file = self.hardware.disk.joinpath(jobmix_name)
         if jobmix_file.is_file():
             self.read_jobmix(jobmix_file)
@@ -35,10 +44,12 @@ class OperatingSystem:
 
     def run(self):
         while not self.jobmix:
-            print("Choose jobmix from disk")
+            # print("Choose jobmix from disk")
             self.print_files()
             self.ask_jobmix()
 
+        print(" ")
+        print("Running Jobs")
         for current_cpu_cycle in self.hardware.cpu:
             print(f"Cycle {current_cpu_cycle}")
             self.scheduler.job_ingress(current_cpu_cycle, self.jobmix)

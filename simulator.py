@@ -8,7 +8,8 @@ from system.scheduler import Scheduler, FCFS, SJF
 
 
 def main():
-    print("Inicio")
+    print("OS Simulator")
+    print(" ")
 
     hardware = Hardware(mem_size=200, block_size=5, cpu_speed=0.1, cpu_limit=100)
 
