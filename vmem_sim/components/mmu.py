@@ -1,28 +1,33 @@
 class MMU:
-    def __init__(self):
+    def __init__(self, block_size):
         self.last_accesses = []
+        self.block_size = block_size
+
+    def __repr__(self) -> str:
+        return "Last accesses on MMU: {}".format(self.last_accesses)
 
     def translate(self, v_address):
-        # Considering 32 bit addresses
-        tag = v_address[0:19]
-        offset = v_address[20:31]
+        # Considering 32 bit addresses with pages of 4kiB
+        v_address = str(format(v_address, "032b"))
+        tag = int(v_address[0:20])
+        offset = int(v_address[20:32])
 
         return tag, offset
 
-    def track_accesses(self, address):
+    def track_accesses(self, block_id):
         # casos:
         # acesso recente: só coloca no final
         # tem espaço, novo acesso: só add
         # sem espaço e novo acesso: tira o mais longe e poe o novo
-        if address in self.last_accesses:
-            self.last_accesses.remove(address)
-            self.last_accesses.append(address)
+        if block_id in self.last_accesses:
+            self.last_accesses.remove(block_id)
+            self.last_accesses.append(block_id)
 
-        elif len(self.last_accesses) < 32 and address not in self.last_accesses:
-            self.last_accesses.append(address)
+        elif len(self.last_accesses) < 32 and block_id not in self.last_accesses:
+            self.last_accesses.append(block_id)
 
-        elif len(self.last_accesses) == 32 and address not in self.last_accesses:
-            removed_block = self.last_accesses.pop(0)
-            self.last_accesses.append(address)
-            return removed_block
+        elif len(self.last_accesses) == 32 and block_id not in self.last_accesses:
+            removed_block_id = self.last_accesses.pop(0)
+            self.last_accesses.append(block_id)
+            return removed_block_id
         return None
