@@ -31,10 +31,17 @@ class Memory:
         removed_block = None
 
         if remove_id:
-            removed_block = self.deallocate([remove_id])
+            for old_block in self.memory:
+                if old_block.block_id == remove_id:
+                    removed_block = old_block
+                    break
 
-        self.memory.append(block)
+            self.memory = [block if x.block_id == remove_id else x for x in self.memory]
 
+        else:
+            self.memory.append(block)
+
+        # print(self.memory_addresses[self.memory.index(block)])
         return self.memory_addresses[self.memory.index(block)], removed_block
 
     def deallocate(self, block_ids):
