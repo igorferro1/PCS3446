@@ -22,4 +22,6 @@ class Hardware:
         )
         self.mem = Memory(size=mem_size, block_size=block_size)
 
-        self.disk = Path.cwd().joinpath("components").joinpath("disk")
+        self.disk = (
+            Path.cwd().joinpath("job_sim").joinpath("components").joinpath("disk")
+        )

@@ -21,6 +21,7 @@ for inst in instructions:
     match inst[0]:
         case "read":
             data_buffer = vm.read(inst[1])
+            print(data_buffer)
         case "write":
             vm.write(inst[1], data_buffer)
         case "print":

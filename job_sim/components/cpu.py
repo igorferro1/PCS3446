@@ -1,5 +1,5 @@
 from time import sleep
-from system.job import Job
+from ..system.job import Job
 from .io import IOProtocol, IORequest, IOFinishException, IOStartException
 
 

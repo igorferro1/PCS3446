@@ -1,6 +1,6 @@
 import os
-from components.memory import Block, Memory
-from components.mmu import MMU
+from ..components.memory import Block, Memory
+from ..components.mmu import MMU
 
 # from components.mmu import MMU
 
@@ -14,7 +14,7 @@ class PageTableEntry:
         self.present = False
 
     def __repr__(self) -> str:
-        return f"Tag: {self.tag}, B_add: {self.block_address}, Present: {self.present}"
+        return f"Tag: {self.tag}, Present: {self.present}, B_add: {self.block_address}"
 
 
 class PageTable:
@@ -126,7 +126,7 @@ class TLB:
             removed_block_tag = self.last_accesses.pop(0)
             self.last_accesses.append(tag)
 
-        if removed_block_tag:
+        if removed_block_tag is not None:
             self.table = [
                 new_entry if x.tag == removed_block_tag else x for x in self.table
             ]
@@ -138,8 +138,8 @@ class TLB:
     def remove_from_tlb(self, block_address):
         for entry in self.table:
             if block_address == entry.block_address:
-                self.table.remove(entry)
                 self.last_accesses.remove(entry.tag)
+                self.table.remove(entry)
                 break
 
 
@@ -175,7 +175,8 @@ class VirtualMemorySpace:
                 self.page_table.unset_block_address(
                     new_address, removed_block, self.disk_dir
                 )
-                self.tlb.remove_from_tlb(new_address)
+                # if present_in_tlb:
+                #     self.tlb.remove_from_tlb(new_address)
 
             self.page_table.set_block_address(tag, new_address, True)
             self.read(virtual_address)
@@ -212,7 +213,7 @@ class VirtualMemorySpace:
                 self.page_table.unset_block_address(
                     new_address, removed_block, self.disk_dir
                 )
-                self.tlb.remove_from_tlb(new_address)
+                # self.tlb.remove_from_tlb(new_address)
 
             self.page_table.set_block_address(tag, new_address, True)
 
@@ -237,7 +238,7 @@ class VirtualMemorySpace:
         for page in self.page_table.entries:
             page: PageTableEntry
             if page.present:
-                self.tlb.remove_from_tlb(page.block_address)
+                # self.tlb.remove_from_tlb(page.block_address)
                 self.page_table.unset_block_address(
                     page.block_address,
                     self.mem.memory[
