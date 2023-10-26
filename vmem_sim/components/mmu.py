@@ -8,9 +8,9 @@ class MMU:
 
     def translate(self, v_address):
         # Considering 32 bit addresses with pages of 4kiB
-        v_address = str(format(v_address, "032b"))
-        tag = int(v_address[0:20])
-        offset = int(v_address[20:32])
+        v_address = str(format(int(v_address), "032b"))
+        tag = int(v_address[0:20], base=2)
+        offset = int(v_address[20:32], base=2)
 
         return tag, offset
 

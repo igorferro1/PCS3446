@@ -8,9 +8,7 @@ class Block:
         self.data = []
 
     def __repr__(self):
-        return "Block with ID {}, Size {}, Data {}".format(
-            self.block_id, self.block_size, self.data
-        )
+        return "Block with ID {}, Size {}".format(self.block_id, self.block_size)
 
 
 class Memory:
@@ -23,18 +21,26 @@ class Memory:
         self.mmu = mmu
 
     def __repr__(self):
-        return "Data {}".format(self.memory)
+        return "\n".join(map(str, self.memory))
 
     def allocate(self, block: Block):
         remove_id = self.mmu.track_accesses(block.block_id)
 
         removed_block = None
 
-        if remove_id:
-            removed_block = self.deallocate([remove_id])
+        if remove_id is not None:
+            for old_block in self.memory:
+                if old_block.block_id == remove_id:
+                    removed_block = old_block
+                    break
 
-        self.memory.append(block)
+            self.memory = [block if x.block_id == remove_id else x for x in self.memory]
 
+        else:
+            self.memory.append(block)
+
+        # print(len(self.memory))
+        # print(self.memory.index(block))
         return self.memory_addresses[self.memory.index(block)], removed_block
 
     def deallocate(self, block_ids):
