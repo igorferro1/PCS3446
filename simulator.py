@@ -1,10 +1,10 @@
-from system.os import OperatingSystem
+from job_sim.system.os import OperatingSystem
 
-from components import Hardware, IOProtocol
+from job_sim.components import Hardware, IOProtocol
 
-from system.job import JobMix, Job
+from job_sim.system.job import JobMix, Job
 
-from system.scheduler import Scheduler, FCFS, SJF
+from job_sim.system.scheduler import Scheduler, FCFS, SJF
 
 
 def main():

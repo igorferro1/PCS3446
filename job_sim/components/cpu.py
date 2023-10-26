@@ -1,6 +1,18 @@
 from time import sleep
-from system.job import Job
+from ..system.job import Job
+from ..system.process import Process
 from .io import IOProtocol, IORequest, IOFinishException, IOStartException
+
+
+class CPUCore:
+    def __ini__(self):
+        self.current_process: Process = None
+
+    def execute(self):
+        if self.current_process.status != "blocked":
+            self.current_process.exec_op()
+        else:
+            print(f"Process {self.current_process} blocked!")
 
 
 class CPU:

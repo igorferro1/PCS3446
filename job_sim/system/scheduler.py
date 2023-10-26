@@ -1,7 +1,7 @@
-from components import Hardware
+from ..components import Hardware
 from .job import JobMix, Job
 
-from components.io import IOStartException, IOFinishException
+from ..components.io import IOStartException, IOFinishException
 
 
 class Scheduler:

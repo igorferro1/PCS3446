@@ -1,4 +1,4 @@
-from components import Hardware
+from ..components import Hardware
 from .job import JobMix, Job
 
 from .scheduler import Scheduler
