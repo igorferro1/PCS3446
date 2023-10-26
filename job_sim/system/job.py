@@ -18,6 +18,7 @@ class Job:
 
         self.operations = operations
 
+        # TO-DO trocar esse *17 pelo que foi determinado no IOPROTOCOL
         self.execution_duration: int = (
             operations.count("op") + operations.count("io") * 17
         )

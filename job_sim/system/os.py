@@ -57,3 +57,6 @@ class OperatingSystem:
             self.scheduler.job_execute(current_cpu_cycle)
 
             self.scheduler.free_mem()
+
+            # passei 1 instante de tempo de io
+            self.hardware.cpu.io.pass_1time()

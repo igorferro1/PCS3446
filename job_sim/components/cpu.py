@@ -9,14 +9,11 @@ class CPUCore:
         self.current_process: Process = None
 
     def execute(self):
-        if self.current_process.status != "blocked":
-            self.current_process.exec_op()
-        else:
-            print(f"Process {self.current_process} blocked!")
+        self.current_process.exec_op()
 
 
 class CPU:
-    def __init__(self, limit: int, speed: int, io: IOProtocol):
+    def __init__(self, limit: int, speed: int, io: IOProtocol, num_cores: int):
         self.time = 0
         self.current_job: Job = None
         self.limit = limit
@@ -24,6 +21,10 @@ class CPU:
 
         self.io = io
         self.current_io_request: IORequest = None
+
+        self.cores = {}
+        for idx in range(num_cores):
+            self.cores[idx] = CPUCore()
 
     def __iter__(self):
         self.cycle = 1
@@ -55,6 +56,11 @@ class CPU:
         return False
 
     def execute(self):
+        for cpu_core in self.cores.items():
+            cpu_core: CPUCore
+            if cpu_core.current_process:
+                cpu_core.execute()
+
         if self.current_io_request:
             self.current_io_request.wait_io()
             if not self.current_io_request.time_left:

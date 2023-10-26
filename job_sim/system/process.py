@@ -2,23 +2,17 @@ from ..components.io import IOProtocol, IORequest, IOFinishException, IOStartExc
 
 
 class Process:
-    def __ini__(
-        self,
-        name: str,
-        arrival_time: int,
-        memory_usage: int,
-        operations: list,
-    ):
+    def __ini__(self, name: str, arrival_time: int, operations: list, io: IOProtocol):
         self.name: str = name
         self.arrival_time: int = arrival_time
 
-        self.memory_usage: int = memory_usage
-        self.mem_addresses: list[int] = []
+        self.io: IOProtocol = io
 
         self.state = "ready"
 
         self.operations = operations
 
+        # TO-DO trocar esse *17 pelo que foi determinado no IOPROTOCOL
         self.execution_duration: int = (
             operations.count("op") + operations.count("io") * 17
         )
@@ -43,15 +37,21 @@ class Process:
             print(f"Process {self.current_process}: Waiting io")
 
     def exec_op(self):
-        op: str = self.operations.pop(0)
-        match op:
-            case "op":
-                print(f"Job {self.current_process}: Aritmetic op")
-            case "ioi":
-                print(f"Job {self.current_process}: IO in op")
-                self.current_io_request = self.io.io_request(type="in")
-                raise IOStartException
-            case "ioo":
-                print(f"Job {self.current_process}: IO out op")
-                self.current_io_request = self.io.io_request(type="out")
-                raise IOStartException
+        if self.state == "blocked":
+            self.wait_io()
+
+        else:
+            op: str = self.operations.pop(0)
+            match op:
+                case "op":
+                    print(f"Job {self.current_process}: Aritmetic op")
+                case "ioi":
+                    print(f"Job {self.current_process}: IO in op")
+                    self.current_io_request = self.io.io_request(type="in")
+                    self.state = "blocked"
+                    raise IOStartException
+                case "ioo":
+                    print(f"Job {self.current_process}: IO out op")
+                    self.current_io_request = self.io.io_request(type="out")
+                    self.state = "blocked"
+                    raise IOStartException

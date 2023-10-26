@@ -30,26 +30,32 @@ class Scheduler:
         )
 
     def job_execute(self, current_cpu_cycle: int):
-        if self.hardware.cpu.is_available() and self.waiting_execution:
-            job: Job = self.waiting_execution.pop(0)
-            job.transition_to_executing(current_cpu_cycle)
-            self.executing = job
-            # job.time_left = job.execution_duration
-            self.hardware.cpu.allocate(job)
+        pass
 
-        if self.hardware.cpu.current_job:
-            try:
-                self.hardware.cpu.execute()
-            except IOStartException:
-                self.waiting_io.append(self.executing)
-            except IOFinishException:
-                self.waiting_io.remove(self.executing)
+        # process ingress (passar CPU, a lista toda de jobs waiting execution e ai o process scheduler vai verificar os cores disponiveis e alocar os jobs prioritários encapsulando eles em um processo)
+        # process execute ( passar a CPU e chama o cpu.execute() )
 
-            # print(f"Executing {self.hardware.cpu.current_job.name}")
-            if not self.hardware.cpu.current_job.time_left():
-                self.executing = None
-                self.waiting_mfree.append(self.hardware.cpu.current_job)
-                self.hardware.cpu.free()
+        # nao teria mais
+        # if self.hardware.cpu.is_available() and self.waiting_execution:
+        #     job: Job = self.waiting_execution.pop(0)
+        #     job.transition_to_executing(current_cpu_cycle)
+        #     self.executing = job
+        #     # job.time_left = job.execution_duration
+        #     self.hardware.cpu.allocate(job)
+
+        # if self.hardware.cpu.current_job:
+        #     try:
+        #         self.hardware.cpu.execute()
+        #     except IOStartException:
+        #         self.waiting_io.append(self.executing)
+        #     except IOFinishException:
+        #         self.waiting_io.remove(self.executing)
+
+        #     # print(f"Executing {self.hardware.cpu.current_job.name}")
+        #     if not self.hardware.cpu.current_job.time_left():
+        #         self.executing = None
+        #         self.waiting_mfree.append(self.hardware.cpu.current_job)
+        #         self.hardware.cpu.free()
 
     def free_mem(self):
         for job in self.waiting_mfree:
