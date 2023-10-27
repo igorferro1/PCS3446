@@ -1,11 +1,13 @@
 from ..components import Hardware
 from .job import JobMix, Job
+from .process import Process
+from .process_scheduler import ProcessScheduler
 
 from ..components.io import IOStartException, IOFinishException
 
 
 class Scheduler:
-    def __init__(self, hardware: Hardware):
+    def __init__(self, hardware: Hardware, p_scheduler: ProcessScheduler):
         self.hardware = hardware
 
         self.waiting_malloc: list[Job] = []
@@ -13,9 +15,11 @@ class Scheduler:
 
         self.executing: Job = None
 
-        self.waiting_io: list[Job] = []
+        self.waiting_io: list[Process] = []
 
         self.waiting_mfree: list[Job] = []
+
+        self.p_scheduler = p_scheduler
 
     def job_ingress(self, current_cpu_cycle: int, jobmix: list[Job]):
         for job in jobmix:
@@ -30,32 +34,11 @@ class Scheduler:
         )
 
     def job_execute(self, current_cpu_cycle: int):
-        pass
-
         # process ingress (passar CPU, a lista toda de jobs waiting execution e ai o process scheduler vai verificar os cores disponiveis e alocar os jobs prioritários encapsulando eles em um processo)
+        self.p_scheduler.ingress(self.hardware.cpu, self.waiting_execution)
+
         # process execute ( passar a CPU e chama o cpu.execute() )
-
-        # nao teria mais
-        # if self.hardware.cpu.is_available() and self.waiting_execution:
-        #     job: Job = self.waiting_execution.pop(0)
-        #     job.transition_to_executing(current_cpu_cycle)
-        #     self.executing = job
-        #     # job.time_left = job.execution_duration
-        #     self.hardware.cpu.allocate(job)
-
-        # if self.hardware.cpu.current_job:
-        #     try:
-        #         self.hardware.cpu.execute()
-        #     except IOStartException:
-        #         self.waiting_io.append(self.executing)
-        #     except IOFinishException:
-        #         self.waiting_io.remove(self.executing)
-
-        #     # print(f"Executing {self.hardware.cpu.current_job.name}")
-        #     if not self.hardware.cpu.current_job.time_left():
-        #         self.executing = None
-        #         self.waiting_mfree.append(self.hardware.cpu.current_job)
-        #         self.hardware.cpu.free()
+        self.p_scheduler.execute(self.hardware.cpu, self.waiting_mfree)
 
     def free_mem(self):
         for job in self.waiting_mfree:
@@ -65,8 +48,8 @@ class Scheduler:
 
 
 class FCFS(Scheduler):
-    def __init__(self, hardware: Hardware):
-        super().__init__(hardware)
+    def __init__(self, hardware: Hardware, p_scheduler: ProcessScheduler):
+        super().__init__(hardware, p_scheduler)
 
     def job_malloc(self):
         for _ in range(len(self.waiting_malloc)):
@@ -79,8 +62,8 @@ class FCFS(Scheduler):
 
 
 class SJF(Scheduler):
-    def __init__(self, hardware: Hardware):
-        super().__init__(hardware)
+    def __init__(self, hardware: Hardware, p_scheduler: ProcessScheduler):
+        super().__init__(hardware, p_scheduler)
         self.scheduler = "SJF"
 
     def job_malloc(self):

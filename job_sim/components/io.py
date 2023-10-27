@@ -1,7 +1,7 @@
 from typing import Literal
 
-IN_TIME = 2
-OUT_TIME = 5
+IN_TIME = 20
+OUT_TIME = 25
 
 
 class IOProtocol:
@@ -26,14 +26,15 @@ class IORequest:
     def __init__(self, io_protocol: IOProtocol, t):
         self.arrival_time = io_protocol.global_time
         self.expected_finish_time = io_protocol.global_time + t
+        self.io_protocol = io_protocol
 
         # self.time_left = t
 
     def wait_io(self):
-        self.time_left -= 1
+        self.time_left()  # -= 1
 
     def time_left(self):
-        aux = self.expected_finish_time - self.arrival_time
+        aux = self.expected_finish_time - self.io_protocol.global_time
         if aux > 0:
             return aux
         else:

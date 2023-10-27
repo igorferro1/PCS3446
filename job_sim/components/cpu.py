@@ -5,11 +5,14 @@ from .io import IOProtocol, IORequest, IOFinishException, IOStartException
 
 
 class CPUCore:
-    def __ini__(self):
+    def __init__(self):
         self.current_process: Process = None
 
     def execute(self):
         self.current_process.exec_op()
+
+    def free(self):
+        self.current_process = None
 
 
 class CPU:
@@ -56,29 +59,29 @@ class CPU:
         return False
 
     def execute(self):
-        for cpu_core in self.cores.items():
+        for cpu_core in self.cores.values():
             cpu_core: CPUCore
             if cpu_core.current_process:
                 cpu_core.execute()
 
-        if self.current_io_request:
-            self.current_io_request.wait_io()
-            if not self.current_io_request.time_left:
-                print(f"Job {self.current_job}: IO Finished")
-                self.current_io_request = None
-                raise IOFinishException
+        # if self.current_io_request:
+        #     self.current_io_request.wait_io()
+        #     if not self.current_io_request.time_left():
+        #         print(f"Job {self.current_job}: IO Finished")
+        #         self.current_io_request = None
+        #         raise IOFinishException
 
-            print(f"Job {self.current_job}: Waiting io")
-        else:
-            op: str = self.current_job.operations.pop(0)
-            match op:
-                case "op":
-                    print(f"Job {self.current_job}: Aritmetic op")
-                case "ioi":
-                    print(f"Job {self.current_job}: IO in op")
-                    self.current_io_request = self.io.io_request(type="in")
-                    raise IOStartException
-                case "ioo":
-                    print(f"Job {self.current_job}: IO out op")
-                    self.current_io_request = self.io.io_request(type="out")
-                    raise IOStartException
+        #     print(f"Job {self.current_job}: Waiting io")
+        # else:
+        #     op: str = self.current_job.operations.pop(0)
+        #     match op:
+        #         case "op":
+        #             print(f"Job {self.current_job}: Aritmetic op")
+        #         case "ioi":
+        #             print(f"Job {self.current_job}: IO in op")
+        #             self.current_io_request = self.io.io_request(type="in")
+        #             raise IOStartException
+        #         case "ioo":
+        #             print(f"Job {self.current_job}: IO out op")
+        #             self.current_io_request = self.io.io_request(type="out")
+        #             raise IOStartException

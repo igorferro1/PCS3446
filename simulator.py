@@ -2,6 +2,7 @@ from job_sim.system.os import OperatingSystem
 from job_sim.components import Hardware, IOProtocol
 from job_sim.system.job import JobMix, Job
 from job_sim.system.scheduler import Scheduler, FCFS, SJF
+from job_sim.system.process_scheduler import ProcessScheduler
 
 from vmem_sim.components.memory import Memory, Block
 from vmem_sim.components.mmu import MMU
@@ -29,10 +30,12 @@ def main():
                 block_size=5,
                 cpu_speed=0.1,
                 cpu_limit=100,
-                io=IOProtocol(in_time=3, out_time=5),
+                io=IOProtocol(in_time=20, out_time=25),
             )
 
-            os = OperatingSystem(hardware=hardware, scheduler=SJF(hardware))
+            os = OperatingSystem(
+                hardware=hardware, scheduler=SJF(hardware, ProcessScheduler())
+            )
 
             # init = JobMix(
             #     [
