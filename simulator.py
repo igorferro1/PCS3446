@@ -15,6 +15,8 @@ import questionary
 def main():
     print("OS Simulator")
     print(" ")
+    input("Identiifcador do teste: ")
+    print(" ")
 
     # print(" ")
     sim = questionary.select(
