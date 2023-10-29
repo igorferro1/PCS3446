@@ -35,7 +35,9 @@ class Scheduler:
 
     def job_execute(self, current_cpu_cycle: int):
         # process ingress (passar CPU, a lista toda de jobs waiting execution e ai o process scheduler vai verificar os cores disponiveis e alocar os jobs prioritários encapsulando eles em um processo)
-        self.p_scheduler.ingress(self.hardware.cpu, self.waiting_execution)
+        self.p_scheduler.ingress(
+            self.hardware.cpu, self.waiting_execution, self.scheduler
+        )
 
         # process execute ( passar a CPU e chama o cpu.execute() )
         self.p_scheduler.execute(self.hardware.cpu, self.waiting_mfree)
@@ -50,6 +52,7 @@ class Scheduler:
 class FCFS(Scheduler):
     def __init__(self, hardware: Hardware, p_scheduler: ProcessScheduler):
         super().__init__(hardware, p_scheduler)
+        self.scheduler = "FCFS"
 
     def job_malloc(self):
         for _ in range(len(self.waiting_malloc)):
@@ -76,3 +79,4 @@ class SJF(Scheduler):
             job.transition_to_ready_for_execution()
 
             self.waiting_execution.sort(key=lambda x: x.execution_duration)
+            print(self.waiting_execution)
