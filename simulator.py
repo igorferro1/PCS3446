@@ -32,7 +32,7 @@ def main():
                 block_size=5,
                 cpu_speed=0.01,
                 cpu_limit=200,
-                cpu_cores=4,
+                cpu_cores=1,
                 io=IOProtocol(in_time=20, out_time=25),
             )
 

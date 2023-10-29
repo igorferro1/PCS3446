@@ -10,17 +10,18 @@ class ProcessScheduler:
         self.allocated_processes = []
         pass
 
-    def ingress(self, cpu: CPU, job_list: list):
+    def ingress(self, cpu: CPU, job_list: list, scheduler: str):
         for job in job_list:
             job: Job
             process = Process(job.name, job.arrival_time, job.operations, cpu.io, job)
-            if process not in self.processes_to_run:
+            if not any(x.name == process.name for x in self.processes_to_run):
                 self.processes_to_run.append(process)
-                job_list.remove(job)
+                if scheduler == "SJF":
+                    self.processes_to_run.sort(key=lambda x: x.job.execution_duration)
 
-        self.distribute(cpu)
+        self.distribute(cpu, job_list)
 
-    def distribute(self, cpu: CPU):
+    def distribute(self, cpu: CPU, job_list: list):
         for ncore, core in cpu.cores.items():
             core: CPUCore
             if (
@@ -40,6 +41,8 @@ class ProcessScheduler:
                         print(
                             f"Process from {process.name} has been allocated to core {ncore}"
                         )
+                        job_list.remove(core.current_process.job)
+
                         break
 
     def execute(self, cpu: CPU, waiting_mfree: list):
