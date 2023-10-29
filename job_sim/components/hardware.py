@@ -13,9 +13,10 @@ class Hardware:
         block_size: int,
         cpu_speed: int,
         cpu_limit: int,
+        cpu_cores: int,
         io: IOProtocol,
     ):
-        self.cpu = CPU(limit=cpu_limit, speed=cpu_speed, io=io, num_cores=2)
+        self.cpu = CPU(limit=cpu_limit, speed=cpu_speed, io=io, num_cores=cpu_cores)
         self.mem = Memory(size=mem_size, block_size=block_size)
 
         self.disk = (

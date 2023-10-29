@@ -1,19 +1,14 @@
 # job1
-t   10
-m   100
-1   op
-2   op
-3   op
-4   ioi
-5   op
-6   op
-7   ioo
-8   op
-9   op
-10  op
+t   1
+m   120
+1   op x120
 
 # job2
-t   30
-m   100
-1   op  x10
-11  ioo
+t   10
+m   60
+1   op  x60
+
+# job3
+t   25
+m   15
+1   op  x15

@@ -26,15 +26,16 @@ def main():
     match sim:
         case "Job Simulation":
             hardware = Hardware(
-                mem_size=200,
+                mem_size=300,
                 block_size=5,
-                cpu_speed=0.1,
-                cpu_limit=100,
+                cpu_speed=0.01,
+                cpu_limit=200,
+                cpu_cores=4,
                 io=IOProtocol(in_time=20, out_time=25),
             )
 
             os = OperatingSystem(
-                hardware=hardware, scheduler=SJF(hardware, ProcessScheduler())
+                hardware=hardware, scheduler=FCFS(hardware, ProcessScheduler())
             )
 
             # init = JobMix(
