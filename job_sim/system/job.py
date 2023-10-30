@@ -101,4 +101,5 @@ class JobMix:
                         else:
                             job_ops.append(tokens[-1].removesuffix("\n"))
 
+        print(self.job_list)
         print("Jobmix read successfuly")

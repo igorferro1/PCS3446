@@ -79,4 +79,3 @@ class SJF(Scheduler):
             job.transition_to_ready_for_execution()
 
             self.waiting_execution.sort(key=lambda x: x.execution_duration)
-            print(self.waiting_execution)

@@ -8,9 +8,11 @@ class ProcessScheduler:
     def __init__(self):
         self.processes_to_run = []
         self.allocated_processes = []
+        self.job_list = []
         pass
 
     def ingress(self, cpu: CPU, job_list: list, scheduler: str):
+        self.job_list = job_list
         for job in job_list:
             job: Job
             process = Process(job.name, job.arrival_time, job.operations, cpu.io, job)
@@ -19,7 +21,7 @@ class ProcessScheduler:
                 if scheduler == "SJF":
                     self.processes_to_run.sort(key=lambda x: x.job.execution_duration)
 
-        self.distribute(cpu, job_list)
+        self.distribute(cpu, self.job_list)
 
     def distribute(self, cpu: CPU, job_list: list):
         for ncore, core in cpu.cores.items():
@@ -41,7 +43,8 @@ class ProcessScheduler:
                         print(
                             f"Process from {process.name} has been allocated to core {ncore}"
                         )
-                        job_list.remove(core.current_process.job)
+                        if core.current_process.job in job_list:
+                            job_list.remove(core.current_process.job)
 
                         break
 
@@ -55,9 +58,9 @@ class ProcessScheduler:
                     if process.state == "blocked":
                         process.wait_io()
         except IOStartException:
-            self.distribute(cpu)
+            self.distribute(cpu, self.job_list)
         except IOFinishException:
-            self.distribute(cpu)
+            self.distribute(cpu, self.job_list)
 
         for core in cpu.cores.values():
             core: CPUCore
