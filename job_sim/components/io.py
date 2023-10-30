@@ -16,7 +16,7 @@ class IOProtocol:
             case "in":
                 return IORequest(io_protocol=self, t=self.in_time)
             case "out":
-                return IORequest(io_protocol=self, t=self.in_time)
+                return IORequest(io_protocol=self, t=self.out_time)
 
     def pass_1time(self):
         self.global_time += 1

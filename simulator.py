@@ -31,13 +31,13 @@ def main():
                 mem_size=300,
                 block_size=5,
                 cpu_speed=0.01,
-                cpu_limit=200,
+                cpu_limit=250,
                 cpu_cores=1,
-                io=IOProtocol(in_time=20, out_time=25),
+                io=IOProtocol(in_time=30, out_time=20),
             )
 
             os = OperatingSystem(
-                hardware=hardware, scheduler=FCFS(hardware, ProcessScheduler())
+                hardware=hardware, scheduler=SJF(hardware, ProcessScheduler())
             )
 
             # init = JobMix(
