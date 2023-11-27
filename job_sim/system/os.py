@@ -50,6 +50,11 @@ class OperatingSystem:
         print("Running Jobs")
         for current_cpu_cycle in self.hardware.cpu:
             print(f"Cycle {current_cpu_cycle}")
+            with open("processadorexec.txt", 'a', encoding='utf-8') as file:
+                    file.write("\n" + str(current_cpu_cycle) + " ")
+            
+            with open("waitingio.txt", 'a', encoding='utf-8') as file:
+                            file.write("\n" + str(current_cpu_cycle) + " ")
             self.scheduler.job_ingress(current_cpu_cycle, self.jobmix)
 
             self.scheduler.job_malloc()

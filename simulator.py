@@ -28,11 +28,11 @@ def main():
     match sim:
         case "Job Simulation":
             hardware = Hardware(
-                mem_size=300,
+                mem_size=1000,
                 block_size=5,
                 cpu_speed=0.01,
-                cpu_limit=250,
-                cpu_cores=1,
+                cpu_limit=620,
+                cpu_cores=2,
                 io=IOProtocol(in_time=30, out_time=20),
             )
 

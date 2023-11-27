@@ -43,6 +43,8 @@ class ProcessScheduler:
                         print(
                             f"Process from {process.name} has been allocated to core {ncore}"
                         )
+                        with open("processadorexec.txt", 'a', encoding='utf-8') as file:
+                            file.write(core.current_process.name[-1])
                         if core.current_process.job in job_list:
                             job_list.remove(core.current_process.job)
 

@@ -50,23 +50,28 @@ class Process:
                 raise IOFinishException
 
             print(f"Process from {self.name}: Waiting io")
+            with open("waitingio.txt", 'a', encoding='utf-8') as file:
+                            file.write(self.name[-1])
 
     def exec_op(self):
         if self.state == "blocked":
             self.wait_io()
 
         else:
-            op: str = self.operations.pop(0)
-            match op:
-                case "op":
-                    print(f"Process from {self.name}: Aritmetic op")
-                case "ioi":
-                    print(f"Process from {self.name}: IO in op")
-                    self.current_io_request = self.io.io_request(type="in")
-                    self.state = "blocked"
-                    raise IOStartException
-                case "ioo":
-                    print(f"Process from {self.name}: IO out op")
-                    self.current_io_request = self.io.io_request(type="out")
-                    self.state = "blocked"
-                    raise IOStartException
+            with open("processadorexec.txt", 'a', encoding='utf-8') as file:
+                file.write(self.name[-1])
+            if self.operations != []:
+                op: str = self.operations.pop(0)
+                match op:
+                    case "op":
+                        print(f"Process from {self.name}: Aritmetic op")
+                    case "ioi":
+                        print(f"Process from {self.name}: IO in op")
+                        self.current_io_request = self.io.io_request(type="in")
+                        self.state = "blocked"
+                        raise IOStartException
+                    case "ioo":
+                        print(f"Process from {self.name}: IO out op")
+                        self.current_io_request = self.io.io_request(type="out")
+                        self.state = "blocked"
+                        raise IOStartException
